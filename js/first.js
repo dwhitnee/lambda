@@ -10,6 +10,9 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
   // }
 });
 
+// To allow more functionality in the Lambda call, add roles to https://console.aws.amazon.com/iam/home?region=us-west-2#/roles/Cognito_FirstPoolUnauth_Role
+
+
 var lambda = new AWS.Lambda();
 
 
