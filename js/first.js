@@ -3,11 +3,11 @@
 // Initialize the Amazon Cognito credentials provider
 AWS.config.region = "us-west-2";
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-  IdentityPoolId: 'us-west-2:e6d9393e-8788-43b0-a7cd-9badc03687d8'
-  // Logins: {
-  //   'www.amazon.com': 'Amazon Access Token'  // access_token is provided in the query string
+  IdentityPoolId: 'us-west-2:e6d9393e-8788-43b0-a7cd-9badc03687d8',
+  Logins: {
+    'www.amazon.com': 'Amazon Access Token'  // access_token is provided in the query string
   //   // http://docs.aws.amazon.com/cognito/latest/developerguide/amazon.html
-  // }
+  }
 });
 
 // To allow more functionality in the Lambda call, add roles to https://console.aws.amazon.com/iam/home?region=us-west-2#/roles/Cognito_FirstPoolUnauth_Role
@@ -62,5 +62,22 @@ function firstLambaFunction() {
 //   returnGreetings();
 // });
 
+function getAccessToken() {
+  var urlParams = window.location.search.split(/[?&]/).slice(1).map(
+    function( paramPair ) {
+      return paramPair.split(/=(.+)?/).slice(0, 2);
+    }).reduce( function( obj, pairArray ) {
+      obj[pairArray[0]] = pairArray[1];
+      return obj;
+    }, {});
+
+  var el = document.getElementById("access_token");
+  el.innerHTML = urlParams.access_token;
+}
+
 
 firstLambaFunction();
+
+
+// debug
+getAccessToken();
