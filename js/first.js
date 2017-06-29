@@ -63,11 +63,17 @@ var cognitoUser = new AWS.CognitoIdentityServiceProvider.CognitoUser(userData);
 
 var COGNITO_URL = "cognito-idp.us-west-2.amazonaws.com/" + USER_POOL;
 
+
+// http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/loading-browser-credentials-cognito.html
+// http://docs.aws.amazon.com/cognito/latest/developerguide/using-amazon-cognito-user-identity-pools-javascript-examples.html
+// https://aws.amazon.com/blogs/mobile/integrating-amazon-cognito-user-pools-with-api-gateway/
+
 function foo() {
   var data = {
     UserPoolId : USER_POOL,
     ClientId : AWS_CLIENT_ID
   };
+  // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CognitoIdentityServiceProvider.html
 
   var userPool =
         new AWS.CognitoIdentityServiceProvider.CognitoUserPool(data);
