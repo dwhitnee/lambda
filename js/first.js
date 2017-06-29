@@ -1,9 +1,14 @@
-/*global AWS, AWSCognito */
+/*global AWS */
+
+
+var USER_POOL = "us-west-2:e6d9393e-8788-43b0-a7cd-9badc03687d8";
+var AWS_CLIENT_ID = "amzn1.application-oa2-client.20ca6ed98b0d4d31816588428f90d4ee";
+
 
 // Initialize the Amazon Cognito credentials provider
 AWS.config.region = "us-west-2";
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-  IdentityPoolId: 'us-west-2:e6d9393e-8788-43b0-a7cd-9badc03687d8',
+  IdentityPoolId: USER_POOL,
   Logins: {
     'www.amazon.com': "AMAZON_TOKEN"  // access_token is provided in the query string
   //   // http://docs.aws.amazon.com/cognito/latest/developerguide/amazon.html
@@ -41,7 +46,7 @@ FB.login(function (response) {
 
 
 /*
-var cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser(userData);
+var cognitoUser = new AWS.CognitoIdentityServiceProvider.CognitoUser(userData);
     cognitoUser.authenticateUser(authenticationDetails, {
         onSuccess: function (result) {
             console.log('access token + ' + result.getAccessToken().getJwtToken());
@@ -56,8 +61,6 @@ var cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser(user
     });
 */
 
-var USER_POOL = "us-west-2:e6d9393e-8788-43b0-a7cd-9badc03687d8";
-var AWS_CLIENT_ID = "amzn1.application-oa2-client.20ca6ed98b0d4d31816588428f90d4ee";
 var COGNITO_URL = "cognito-idp.us-west-2.amazonaws.com/" + USER_POOL;
 
 function foo() {
@@ -67,7 +70,7 @@ function foo() {
   };
 
   var userPool =
-        new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(data);
+        new AWS.CognitoIdentityServiceProvider.CognitoUserPool(data);
 
   var cognitoUser = userPool.getCurrentUser();
 
