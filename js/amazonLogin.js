@@ -1,4 +1,4 @@
-/*global amazon */
+/*global amazon, AWS */
 
 /**
  *  Create a login with amazon button and configure it
@@ -18,27 +18,47 @@ function addAmazonLoginScript(document) {
 };
 
 
-function addAmazonLoginClickHandler( document, window, clientID, url ) {
+
+
+
+function addAmazonLoginClickHandler( window, clientID, url, loginCallback ) {
 
   window.onAmazonLoginReady = function() {
     // https://developer.amazon.com/lwa/sp/create-security-profile.html
     amazon.Login.setClientId( clientID );
   };
+  var document = window.document;
+
+  document.getElementById("AmazonLogout").onclick = function() {
+    amazon.Login.logout();
+  };
+
 
   document.getElementById('LoginWithAmazon').onclick = function() {
-    amazon.Login.authorize({ scope: 'profile' }, url);
+
+    // amazon.Login.authorize({ scope: 'profile' }, url);
+
+    amazon.Login.authorize( {scope: "profile"}, function(resp) {
+      if (!resp.error) { // logged in
+        var creds = AWS.config.credentials;
+        // creds.params.RoleArn =
+        //   'arn:aws:iam::1234567890:role/MyApplication-CognitoAuthenticated';
+        creds.params.Logins = {
+          'www.amazon.com': resp.access_token
+        };
+
+        // manually expire credentials so next request will fire a refresh()
+        creds.expired = true;
+      }
+      if (loginCallback) {
+        loginCallback( resp.error, creds.params.Logins['www.amazon.com'] );
+      }
+
+    });
+
     return false;
   };
 };
 
-
-var dwhitney_personal = "amzn1.application-oa2-client.04dc8af01ef1490e81c7ddb7f1a90c7d";
-
-var dwhitney_amazon = "amzn1.application-oa2-client.20ca6ed98b0d4d31816588428f90d4ee";
-
-addAmazonLoginClickHandler(
-  document, window,
-  dwhitney_amazon,
-  "http://localhost:8080/lambda/index.html");
 
 addAmazonLoginScript( document );
