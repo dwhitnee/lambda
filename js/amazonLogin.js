@@ -47,6 +47,8 @@ function addAmazonLoginClickHandler( window, clientID, url, loginCallback ) {
           'www.amazon.com': resp.access_token
         };
 
+        // how does this turn into an identity?  refresh() doesn't seem to do it
+        // creds.refresh();
         // manually expire credentials so next request will fire a refresh()
         creds.expired = true;
       }

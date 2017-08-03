@@ -10,33 +10,43 @@ var COGNITO_URL = "cognito-idp.us-west-2.amazonaws.com/" + USER_POOL;
 
 
 
-// Initialize the Amazon Cognito credentials provider
+// Initialize the Amazon Cognito credentials provider.
+// This will give us an "unauthenticated role"
+// To make it authenticated, amazon.Login.authorize needs to run
+/// (in amazonLogin) and put access_token in
+// AWS.config.credentials.params.Logins['www.amazon.com']
+
 AWS.config.update({
   region: "us-west-2",
   credentials: new AWS.CognitoIdentityCredentials({
     IdentityPoolId: USER_POOL
-    // RoleArn: "arn:aws:iam::671931848375:role/Cognito_FirstPoolUnauth_Role",
+    // RoleArn: "arn:aws:iam::671931848375:role/Cognito_FirstPoolUnauth_Role"
     // AccountId: ACCOUNT_ID
   })
 });
 
+
+// what to do when user logged in
 function loginHandler( err, token ) {
   if (err) {
     console.error( err );
   } else {
     console.log("Logged in with " + token );
-    checkUser( token );
+    // checkUser( token );
+    // getCurrentUser( token );
+    // doSomething();
+    firstLambaFunction();
   }
 }
 
-
+// setup login button to do what we want after email/password entered
 function initLogin() {
   // from amazonLogin.js
   addAmazonLoginClickHandler( window, AWS_CLIENT_ID,
                               "http://localhost:8080/lambda/index.html",
-                              loginHandler
-  );
+                              loginHandler  );
 }
+
 initLogin();
 
 
@@ -84,8 +94,10 @@ function getCurrentUser() {
   };
   // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CognitoIdentityServiceProvider.html
 
-  var userPool =
-        new AWS.CognitoIdentityServiceProvider.CognitoUserPool(data);
+  var userPool = new AWS.CognitoIdentityServiceProvider.CognitoUserPool( {
+    UserPoolId : USER_POOL,
+    ClientId : AWS_CLIENT_ID
+  });
 
   var cognitoUser = userPool.getCurrentUser();
 
@@ -114,9 +126,20 @@ function getCurrentUser() {
 // getCurrentUser();
 
 
+function doSomething() {
+  var s3 = new AWS.S3();
+  s3.listBuckets({}, function( err, data ) {
+    if (err) {
+      console.error( err );
+    } else {
+      console.log( data );
+    }
+  });
+}
+
 
 // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CognitoIdentityServiceProvider.html
-
+/*
 function checkUser( userToken ) {
   var params = {
     AccessToken: userToken
@@ -135,7 +158,7 @@ if (AWS.config.credentials.params.Logins) {
   checkUser (AWS.config.credentials.params.Logins['www.amazon.com']);
 }
 
-
+*/
 
 
 //---------------------------------------------------------------------
@@ -234,7 +257,7 @@ function retrieveData() {
 
 
 
-firstLambaFunction();
+//firstLambaFunction();
 
 
 // debug
